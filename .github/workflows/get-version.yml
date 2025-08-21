@@ -1,0 +1,32 @@
+name: Get Discourse Version
+
+on:
+  push:
+    paths:
+      - ".github/workflows/get-version.ya?ml"
+  pull_request:
+    paths:
+      - ".github/workflows/get-version.ya?ml"
+  schedule:
+    - cron: "0 8 * * *"
+  workflow_dispatch:
+  repository_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      # The forum's Discourse version is shown in the `meta name="generator"` tag in the source HTML of each page.
+      # For example, this tag:
+      # <meta name="generator" content="Discourse 3.6.0.beta1-dev - https://github.com/discourse/discourse version ad2d3007d55a7aeec153dbea6eec616add005355">
+      # tells us that the forum's current version is at commit hash ad2d3007d55a7aeec153dbea6eec616add005355 in the
+      # discourse/discourse repository.
+      - name: Display page source
+        # https://forum.arduino.cc/safe-mode was arbitrarily chosen as a page that doesn't have a lot of content.
+        run: |
+          curl \
+            --silent \
+            https://forum.arduino.cc/safe-mode
